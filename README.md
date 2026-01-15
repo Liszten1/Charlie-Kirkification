@@ -66,23 +66,6 @@ if (l_ratio > 0.70) and (r_ratio > 0.70):
 
 ---
 
-## Contributing
-
-Feel free to contribtue to improve this tool
-
-1. Fork the repository  
-2. Create a new branch:
-   ```bash
-   git checkout -b feat/your-feature
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add feature"
-   ```
-4. Push your branch and open a pull request
-
----
-
 ## License
 
 This project is licensed under the MIT License.  
