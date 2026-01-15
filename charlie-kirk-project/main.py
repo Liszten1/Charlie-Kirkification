@@ -2,12 +2,10 @@ import os
 import sys
 import time
 from pathlib import Path
-
-import cv2  # type: ignore
-import mediapipe as mp  # type: ignore
-# Remove outliers using mean and standard deviation
+import cv2  
+import mediapipe as mp 
 import numpy as np
-import pygame  # pyright: ignore[reportMissingImports]
+import pygame  
 from PIL import Image
 
 # Initialize pygame mixer
