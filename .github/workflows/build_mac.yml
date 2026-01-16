@@ -5,7 +5,6 @@ on:
 
 jobs:
   build:
-    # We use macos-latest (M1/Apple Silicon) to match your friend's Mac.
     runs-on: macos-latest
 
     steps:
@@ -15,18 +14,24 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        # Python 3.11 is perfect for M1 Macs
         python-version: '3.11'
 
     - name: Install Dependencies
       run: |
         cd charlie-kirk-project
         pip install --upgrade pip
-        # "numpy<2" fixes the crash by installing the stable version (1.26.4)
-        # instead of the new broken one (2.0)
-        pip install "numpy<2"
+        # 1. Install normal requirements first (This might install broken Numpy 2.0)
         pip install -r requirements.txt
         pip install --upgrade pyinstaller
+        
+        # 2. FORCE the downgrade at the very end.
+        # This deletes whatever version was installed and forces the safe 1.26.4 version.
+        pip install "numpy<2" --force-reinstall
+
+    - name: Verify Numpy Version
+      run: |
+        # This will print the version in the logs so we can prove it worked
+        python -c "import numpy; print(f'INSTALLED NUMPY VERSION: {numpy.__version__}')"
 
     - name: Inject Path Fix
       run: |
@@ -36,7 +41,6 @@ jobs:
     - name: Build Application
       run: |
         cd charlie-kirk-project
-        # We jam all the MediaPipe parts in manually to be safe
         pyinstaller main.py \
           --name "CharlieKirkification" \
           --windowed \
