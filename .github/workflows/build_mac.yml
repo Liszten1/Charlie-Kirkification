@@ -1,0 +1,52 @@
+name: Build MacOS App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        # Go into the project folder first
+        cd charlie-kirk-project
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Inject Path Fix
+      run: |
+        cd charlie-kirk-project
+        echo "import sys; import os; os.chdir(os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__)))" | cat - main.py > temp && mv temp main.py
+
+    - name: Build Application
+      run: |
+        cd charlie-kirk-project
+        pyinstaller main.py \
+          --name "CharlieKirkification" \
+          --windowed \
+          --noconsole \
+          --collect-all mediapipe \
+          --add-data "*.mp4:." \
+          --add-data "*.png:." \
+          --clean
+
+    - name: Zip the Application
+      run: |
+        cd charlie-kirk-project/dist
+        zip -r CharlieKirkification_Mac.zip CharlieKirkification.app
+
+    - name: Upload App for Download
+      uses: actions/upload-artifact@v4
+      with:
+        name: CharlieKirkification-Mac-App
+        path: charlie-kirk-project/dist/CharlieKirkification_Mac.zip
