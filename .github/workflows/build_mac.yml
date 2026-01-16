@@ -5,8 +5,7 @@ on:
 
 jobs:
   build:
-    # We HAVE to use macos-latest (M1).
-    # This will work for your friend (M1) but NOT for you (Intel).
+    # We use macos-latest (M1/Apple Silicon) to match your friend's Mac.
     runs-on: macos-latest
 
     steps:
@@ -16,16 +15,18 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        # Upgrading to 3.11 to fix the Numpy crash on M1
+        # Python 3.11 is perfect for M1 Macs
         python-version: '3.11'
 
     - name: Install Dependencies
       run: |
         cd charlie-kirk-project
         pip install --upgrade pip
-        # We upgrade pyinstaller and numpy to ensure they work on M1
+        # "numpy<2" fixes the crash by installing the stable version (1.26.4)
+        # instead of the new broken one (2.0)
+        pip install "numpy<2"
         pip install -r requirements.txt
-        pip install --upgrade pyinstaller numpy
+        pip install --upgrade pyinstaller
 
     - name: Inject Path Fix
       run: |
@@ -35,11 +36,15 @@ jobs:
     - name: Build Application
       run: |
         cd charlie-kirk-project
+        # We jam all the MediaPipe parts in manually to be safe
         pyinstaller main.py \
           --name "CharlieKirkification" \
           --windowed \
           --noconsole \
           --collect-all mediapipe \
+          --hidden-import "mediapipe.python.solutions.face_mesh" \
+          --hidden-import "mediapipe.python.solutions.drawing_utils" \
+          --hidden-import "cv2" \
           --add-data "assets:assets" \
           --clean
 
