@@ -18,7 +18,6 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        # Go into the project folder first
         cd charlie-kirk-project
         pip install -r requirements.txt
         pip install pyinstaller
@@ -36,8 +35,7 @@ jobs:
           --windowed \
           --noconsole \
           --collect-all mediapipe \
-          --add-data "*.mp4:." \
-          --add-data "*.png:." \
+          --add-data "assets:assets" \
           --clean
 
     - name: Zip the Application
