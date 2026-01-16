@@ -5,9 +5,8 @@ on:
 
 jobs:
   build:
-    # We use macos-13 (Intel) to avoid the "Numpy" bug.
-    # This works on M1/M2/M3 Macs too (via Rosetta).
-    runs-on: macos-13
+    # Switching to macos-12 (Monterey) which is older but very stable.
+    runs-on: macos-12
 
     steps:
     - name: Checkout Code
